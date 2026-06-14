@@ -42,7 +42,6 @@ jobs:
           echo "MEMORY set: $([[ -n "$OCI_MEMORY_IN_GBS" ]] && echo YES || echo NO)"
           echo "=== PHP OUTPUT ==="
           php index.php || true
-        run: |
           OUTPUT=$(php index.php 2>&1)
           echo "$OUTPUT"
           echo "output=$OUTPUT" >> $GITHUB_OUTPUT
