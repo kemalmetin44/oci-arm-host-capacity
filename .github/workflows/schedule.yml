@@ -14,21 +14,12 @@ jobs:
           php-version: '8.1'
       - name: Install dependencies
         run: composer install --no-dev
-      - name: Write OCI private key to file
-        env:
-          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
-        run: |
-          printf '%s\n' "$OCI_PRIVATE_KEY" > /tmp/oci_key.pem
-          chmod 600 /tmp/oci_key.pem
-          echo "Satir sayisi: $(wc -l < /tmp/oci_key.pem)"
-          echo "Ilk satir: $(head -1 /tmp/oci_key.pem)"
-          echo "Son satir: $(tail -1 /tmp/oci_key.pem)"
       - name: Run capacity check
         env:
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
-          OCI_PRIVATE_KEY_FILENAME: /tmp/oci_key.pem
+          OCI_PRIVATE_KEY_FILENAME: ${{ secrets.OCI_PRIVATE_KEY_FILENAME }}
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
           OCI_IMAGE_ID: ${{ secrets.OCI_IMAGE_ID }}
@@ -36,7 +27,6 @@ jobs:
           OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
           OCI_SHAPE: VM.Standard.A1.Flex
-          OCI_COMPARTMENT_ID: ${{ secrets.OCI_COMPARTMENT_ID }}
           OCI_AVAILABILITY_DOMAIN: RQqv:EU-FRANKFURT-1-AD-1
         run: php index.php || true
       - name: Send Telegram notification
@@ -44,7 +34,7 @@ jobs:
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
-          OCI_PRIVATE_KEY_FILENAME: /tmp/oci_key.pem
+          OCI_PRIVATE_KEY_FILENAME: ${{ secrets.OCI_PRIVATE_KEY_FILENAME }}
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
           OCI_IMAGE_ID: ${{ secrets.OCI_IMAGE_ID }}
@@ -52,7 +42,6 @@ jobs:
           OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
           OCI_SHAPE: VM.Standard.A1.Flex
-          OCI_COMPARTMENT_ID: ${{ secrets.OCI_COMPARTMENT_ID }}
           OCI_AVAILABILITY_DOMAIN: RQqv:EU-FRANKFURT-1-AD-1
         run: |
           OUTPUT=$(php index.php 2>&1 || true)
