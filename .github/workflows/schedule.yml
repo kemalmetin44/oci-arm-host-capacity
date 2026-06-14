@@ -23,7 +23,7 @@ jobs:
           echo "Satir sayisi: $(wc -l < /tmp/oci_key.pem)"
           echo "Ilk satir: $(head -1 /tmp/oci_key.pem)"
           echo "Son satir: $(tail -1 /tmp/oci_key.pem)"
-      - name: Run capacity check
+     - name: Run capacity check
         env:
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
@@ -36,6 +36,7 @@ jobs:
           OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
           OCI_SHAPE: VM.Standard.A1.Flex
+          OCI_COMPARTMENT_ID: ${{ secrets.OCI_COMPARTMENT_ID }}
         run: php index.php || true
       - name: Send Telegram notification
         env:
@@ -49,6 +50,8 @@ jobs:
           OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
           OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
+          OCI_SHAPE: VM.Standard.A1.Flex
+          OCI_COMPARTMENT_ID: ${{ secrets.OCI_COMPARTMENT_ID }}
         run: |
           OUTPUT=$(php index.php 2>&1 || true)
           if echo "$OUTPUT" | grep -q "launchInstance"; then
