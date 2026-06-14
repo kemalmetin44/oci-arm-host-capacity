@@ -1,24 +1,21 @@
 name: Oracle ARM Slot Checker
-
 on:
   schedule:
     - cron: '*/15 * * * *'
   workflow_dispatch:
-
 jobs:
   check-capacity:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: 'true'
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4       # ← BU OLMALI EN BAŞTA
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-
       - name: Install dependencies
         run: composer install --no-dev
-
       - name: Run capacity check
         id: run_script
         env:
