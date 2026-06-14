@@ -37,6 +37,7 @@ jobs:
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
           OCI_SHAPE: VM.Standard.A1.Flex
           OCI_COMPARTMENT_ID: ${{ secrets.OCI_COMPARTMENT_ID }}
+          OCI_AVAILABILITY_DOMAIN: RQqv:EU-FRANKFURT-1-AD-1
         run: php index.php || true
       - name: Send Telegram notification
         env:
@@ -52,6 +53,7 @@ jobs:
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
           OCI_SHAPE: VM.Standard.A1.Flex
           OCI_COMPARTMENT_ID: ${{ secrets.OCI_COMPARTMENT_ID }}
+          OCI_AVAILABILITY_DOMAIN: RQqv:EU-FRANKFURT-1-AD-1
         run: |
           OUTPUT=$(php index.php 2>&1 || true)
           if echo "$OUTPUT" | grep -q "launchInstance"; then
