@@ -17,7 +17,6 @@ jobs:
       - name: Install dependencies
         run: composer install --no-dev
       - name: Run capacity check
-        id: run_script
         env:
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
@@ -29,6 +28,20 @@ jobs:
           OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
           OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
+        run: |
+          echo "=== ENV CHECK ==="
+          echo "USER_ID set: $([[ -n "$OCI_USER_ID" ]] && echo YES || echo NO)"
+          echo "TENANCY set: $([[ -n "$OCI_TENANCY_ID" ]] && echo YES || echo NO)"
+          echo "FINGERPRINT set: $([[ -n "$OCI_KEY_FINGERPRINT" ]] && echo YES || echo NO)"
+          echo "PRIVATE_KEY set: $([[ -n "$OCI_PRIVATE_KEY" ]] && echo YES || echo NO)"
+          echo "REGION set: $([[ -n "$OCI_REGION" ]] && echo YES || echo NO)"
+          echo "SUBNET set: $([[ -n "$OCI_SUBNET_ID" ]] && echo YES || echo NO)"
+          echo "IMAGE set: $([[ -n "$OCI_IMAGE_ID" ]] && echo YES || echo NO)"
+          echo "SSH_KEY set: $([[ -n "$OCI_SSH_PUBLIC_KEY" ]] && echo YES || echo NO)"
+          echo "OCPUS set: $([[ -n "$OCI_OCPUS" ]] && echo YES || echo NO)"
+          echo "MEMORY set: $([[ -n "$OCI_MEMORY_IN_GBS" ]] && echo YES || echo NO)"
+          echo "=== PHP OUTPUT ==="
+          php index.php || true
         run: |
           OUTPUT=$(php index.php 2>&1)
           echo "$OUTPUT"
