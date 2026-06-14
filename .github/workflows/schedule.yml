@@ -1,0 +1,44 @@
+name: Oracle ARM Slot Checker
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # Her 15 dakikada bir çalışır
+  workflow_dispatch:           # Manuel başlatma butonu
+
+jobs:
+  check-capacity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Install dependencies
+        run: composer install --no-dev
+
+      - name: Run capacity check
+        env:
+          OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
+          OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
+          OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
+          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+          OCI_REGION: ${{ secrets.OCI_REGION }}
+          OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
+          OCI_IMAGE_ID: ${{ secrets.OCI_IMAGE_ID }}
+          OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
+          OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
+          OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
+        run: php index.php
+
+      - name: Send Telegram notification on success
+        if: success()
+        run: |
+          OUTPUT=$(php index.php 2>&1 || true)
+          if echo "$OUTPUT" | grep -q "launchInstance"; then
+            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+              -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+              -d text="✅ Oracle ARM instance OLUŞTURULDU! Hemen kontrol et: https://cloud.oracle.com/compute/instances"
+          fi
