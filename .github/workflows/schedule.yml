@@ -23,7 +23,7 @@ jobs:
           echo "Satir sayisi: $(wc -l < /tmp/oci_key.pem)"
           echo "Ilk satir: $(head -1 /tmp/oci_key.pem)"
           echo "Son satir: $(tail -1 /tmp/oci_key.pem)"
-     - name: Run capacity check
+      - name: Run capacity check
         env:
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
