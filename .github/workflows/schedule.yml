@@ -14,10 +14,16 @@ jobs:
           php-version: '8.1'
       - name: Install dependencies
         run: composer install --no-dev
-      - name: Write OCI private key to file
+       - name: Write OCI private key to file
+        env:
+          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
         run: |
-          echo "${{ secrets.OCI_PRIVATE_KEY }}" > /tmp/oci_key.pem
+          printf '%s\n' "$OCI_PRIVATE_KEY" > /tmp/oci_key.pem
           chmod 600 /tmp/oci_key.pem
+          echo "=== KEY KONTROL ==="
+          echo "Satir sayisi: $(wc -l < /tmp/oci_key.pem)"
+          echo "Ilk satir: $(head -1 /tmp/oci_key.pem)"
+          echo "Son satir: $(tail -1 /tmp/oci_key.pem)"
       - name: Run capacity check
         env:
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
