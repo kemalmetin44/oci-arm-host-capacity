@@ -14,13 +14,12 @@ jobs:
           php-version: '8.1'
       - name: Install dependencies
         run: composer install --no-dev
-       - name: Write OCI private key to file
+      - name: Write OCI private key to file
         env:
           OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
         run: |
           printf '%s\n' "$OCI_PRIVATE_KEY" > /tmp/oci_key.pem
           chmod 600 /tmp/oci_key.pem
-          echo "=== KEY KONTROL ==="
           echo "Satir sayisi: $(wc -l < /tmp/oci_key.pem)"
           echo "Ilk satir: $(head -1 /tmp/oci_key.pem)"
           echo "Son satir: $(tail -1 /tmp/oci_key.pem)"
@@ -36,16 +35,8 @@ jobs:
           OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
           OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
-        run: |
-          php index.php || true
+        run: php index.php || true
       - name: Send Telegram notification
-        run: |
-          OUTPUT=$(php index.php 2>&1 || true)
-          if echo "$OUTPUT" | grep -q "launchInstance"; then
-            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-              -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-              -d text="Oracle ARM instance OLUSTURULDU! https://cloud.oracle.com/compute/instances"
-          fi
         env:
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
@@ -57,3 +48,10 @@ jobs:
           OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
           OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
+        run: |
+          OUTPUT=$(php index.php 2>&1 || true)
+          if echo "$OUTPUT" | grep -q "launchInstance"; then
+            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+              -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+              -d text="Oracle ARM instance OLUSTURULDU! https://cloud.oracle.com/compute/instances"
+          fi
