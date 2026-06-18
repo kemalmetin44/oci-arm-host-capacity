@@ -36,7 +36,7 @@ jobs:
           OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
           OCI_SHAPE: VM.Standard.A1.Flex
-          OCI_AVAILABILITY_DOMAIN: RQqv:EU-FRANKFURT-1-AD-1
+          OCI_AVAILABILITY_DOMAIN: '["RQqv:EU-FRANKFURT-1-AD-1","RQqv:EU-FRANKFURT-1-AD-2","RQqv:EU-FRANKFURT-1-AD-3"]'
           OCI_COMPARTMENT_ID: ${{ secrets.OCI_COMPARTMENT_ID }}
         run: php index.php || true
       - name: Send Telegram notification
@@ -52,7 +52,7 @@ jobs:
           OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
           OCI_MEMORY_IN_GBS: ${{ secrets.OCI_MEMORY_IN_GBS }}
           OCI_SHAPE: VM.Standard.A1.Flex
-          OCI_AVAILABILITY_DOMAIN: RQqv:EU-FRANKFURT-1-AD-1
+          OCI_AVAILABILITY_DOMAIN: '["RQqv:EU-FRANKFURT-1-AD-1","RQqv:EU-FRANKFURT-1-AD-2","RQqv:EU-FRANKFURT-1-AD-3"]'
           OCI_COMPARTMENT_ID: ${{ secrets.OCI_COMPARTMENT_ID }}
         run: |
           OUTPUT=$(php index.php 2>&1 || true)
